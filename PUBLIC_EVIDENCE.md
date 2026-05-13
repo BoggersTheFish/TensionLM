@@ -12,7 +12,7 @@ fast without overstating results.
 | The tension field is inspectable as weighted token edges. | Per-head/token visualizers, tau export, streaming tau export, corpus/head profiling. | Interpretability utility, not proof of better reasoning. |
 | Curriculum order matters for formal domains. | Logic -> language -> math reduces first-contact math shock versus cold start in local runs. | Local/repo benchmark evidence; needs larger external replication. |
 | Logic replay reduces forgetting. | `logic_mix` sweeps and the 117M abbreviated run preserve transitivity better than no replay. | Ratio is not settled; 0.10 is a working prior, not an optimum. |
-| CPU top-layer repair can move formal/code behavior. | Multi-seed TAC repair: 46/172 prefix vs base 28/172 and GPT-2 12/172. Held-out repair improves 21/120 vs base 10/120. | Gains are partly format/domain adaptation; shuffled-answer control also improves. |
+| CPU top-layer repair can move formal/code behavior. | Multi-seed TAC repair: 46/172 prefix vs base 28/172 and GPT-2 12/172. Held-out v2 prefix-only repair improves 20/120 prefix vs base 7/120 and GPT-2 3/120. | Gains are format/domain sensitive; matched prefix-only controls remain much lower but this is still local TAC evidence. |
 | Matched small-scale tension-vs-softmax did not show a capability edge. | 22M-ish three-seed FineWeb pilot: tension mean PPL 537.85 vs softmax 538.13, outcome_iii_no_capability_edge. | Do not call the mechanism a general capability win from this result. |
 
 ## Public Artifacts
@@ -25,6 +25,7 @@ fast without overstating results.
   - `BoggersTheFish/TensionLM-Curriculum-13M`
   - `BoggersTheFish/TensionLM-Phase2-TSNative`
   - `BoggersTheFish/TensionLM-Wave02-22M-H2H`
+  - `BoggersTheFish/TensionLM-117M-CPU-Repair-TAC-v2-PrefixOnly`
 - Source repo: `github.com/BoggersTheFish/bozo`
 - Related proof-control artifacts: `BoggersTheFish/ts-proof-ranker-v0` through `v4`
 
@@ -48,10 +49,9 @@ fast without overstating results.
 
 ## Next Evidence Required
 
-1. Run the larger held-out TAC v2 set with stronger controls that preserve
-   answer frequency and category balance.
-2. Sweep CPU repair token budgets against correct/global-shuffled/category-
-   shuffled repair data.
+1. Repeat the held-out TAC v2 prefix-only repair across multiple seeds and token
+   budgets.
+2. Publish the best prefix-only CPU repair checkpoint with model-card controls.
 3. Finish a GPT-2-tokenized W=256 Path A run with ProofPile/code curriculum when
    GPU compute is available.
 4. Keep the matched softmax result visible even though it is neutral; it is the
@@ -76,3 +76,27 @@ code_reasoning. The correct v2 benchmark has zero prompt overlap with the
 built-in benchmark and the v1 held-out TAC file. The control files preserve the
 answer multiset globally/category-wise and avoid leaving the original answer on
 the same prompt.
+
+## Current CPU Repair Upgrade
+
+Best local checkpoint:
+
+- `checkpoints/formal-repair-v2-prefix-only-seed42/latest.pt`
+
+Published checkpoint:
+
+- `BoggersTheFish/TensionLM-117M-CPU-Repair-TAC-v2-PrefixOnly`
+
+Held-out TAC v2, seed 42:
+
+| Run | Prefix | Substring |
+|---|---:|---:|
+| GPT-2 | 3/120 | 5/120 |
+| Base TensionLM 117M | 7/120 | 11/120 |
+| Prefix-only CPU repair | 20/120 | 21/120 |
+| Prefix-only category control | 6/120 | 6/120 |
+| Prefix-only global control | 5/120 | 5/120 |
+
+The active hypothesis is that answer-prefix-only repair fixes a training/eval
+contract mismatch caused by `Question:`/`Answer:` wrapper examples. The result
+is not yet a broad reasoning claim; arithmetic remains weak at `1/40` prefix.

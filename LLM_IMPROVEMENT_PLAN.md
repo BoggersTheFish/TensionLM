@@ -227,18 +227,35 @@ Result:
 | Clean repair | 7/120 | 10/120 | +4 | Ties base; does not improve. |
 | Category control | 5/120 | 7/120 | +2 | Degrades code and overall. |
 | Global control | 3/120 | 4/120 | +0 | Collapses to GPT-2-level prefix. |
+| Prefix-only clean repair | 20/120 | 21/120 | +17 | Current best CPU repair. |
+| Prefix-only category control | 6/120 | 6/120 | +3 | Matched control stays low. |
+| Prefix-only global control | 5/120 | 5/120 | +2 | Matched control stays low. |
 
 Interpretation:
 
 - The top-layer CPU repair pressure is real enough that bad controls degrade
-  the model, but the clean run does not beat the base model.
+  the model, but wrapper-mixed clean repair does not beat the base model.
 - Many clean-run misses emit `Answer:` or recycled `Question:` fragments before
   the answer. This is a training/eval contract mismatch, not just a reasoning
   failure.
-- Next repair attempt should remove wrapper examples and train only completions
-  where the answer begins immediately after the prompt.
+- Removing wrapper examples fixes the contract mismatch: prefix-only repair
+  reaches `20/120` prefix, versus `7/120` for base TensionLM and `3/120` for
+  GPT-2.
+- Matched prefix-only controls remain low (`6/120` category control and
+  `5/120` global control), so the clean prefix-only gain is not explained by
+  format alone.
 
-Immediate prefix-only repair command:
+Current best checkpoint:
+
+- `checkpoints/formal-repair-v2-prefix-only-seed42/latest.pt`
+- HF:
+  `BoggersTheFish/TensionLM-117M-CPU-Repair-TAC-v2-PrefixOnly`
+- Eval log:
+  `logs/eval/formal-repair-v2-prefix-only-seed42_raw_tac_seed42.json`
+- Comparison log:
+  `logs/eval/formal-repair-v2-prefix-only-seed42_vs_gpt2_seed42.json`
+
+Reproduction command:
 
 ```bash
 RUN_NAME="formal-repair-v2-prefix-only-seed42" \

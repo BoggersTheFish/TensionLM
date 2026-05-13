@@ -93,16 +93,23 @@ python inference.py --model_dir . --prompt "In Python, list(range(4)) ends with"
 
 ## Local Held-Out Eval
 
-Held-out TAC benchmark, raw generation, seeds `1,2,3,42`:
+Held-out TAC v2 benchmark, raw generation, seed `42`.
+The v2 prompt set has 120 items with zero prompt overlap against the repair
+holdout exclusions, the built-in formal eval, and the earlier v1 held-out TAC
+file.
 
-| Model | Prefix | Arithmetic | Transitivity | Code |
-|---|---:|---:|---:|---:|
-| GPT-2 124M | 0/120 | 0/40 | 0/40 | 0/40 |
-| Base TensionLM 117M | 10/120 | 3/40 | 7/40 | 0/40 |
-| Correct repair | 21/120 | 7/40 | 11/40 | 3/40 |
-| Shuffled-answer control | 15/120 | 3/40 | 8/40 | 4/40 |
+| Model | Prefix | Substring | Arithmetic prefix | Transitivity prefix | Code prefix |
+|---|---:|---:|---:|---:|---:|
+| GPT-2 124M | 3/120 | 5/120 | 1/40 | 0/40 | 2/40 |
+| Base TensionLM 117M | 7/120 | 11/120 | 0/40 | 6/40 | 1/40 |
+| Prefix-only repair | 20/120 | 21/120 | 1/40 | 13/40 | 6/40 |
+| Prefix-only category control | 6/120 | 6/120 | 0/40 | 2/40 | 4/40 |
+| Prefix-only global control | 5/120 | 5/120 | 1/40 | 3/40 | 1/40 |
 
-Exact held-out prompt overlap with the correct repair corpus was `0/30`.
+The main improvement comes from aligning the repair corpus with the eval
+contract: completions begin immediately with the answer, without
+`Question:`/`Answer:` wrapper examples. Arithmetic remains weak and this should
+not be read as a broad reasoning result.
 
 ## Limitations
 
