@@ -37,6 +37,9 @@ prepare_data() {
   if [[ "${SHUFFLE_ANSWERS:-0}" == "1" ]]; then
     args+=(--shuffle_answers)
   fi
+  if [[ "${SHUFFLE_WITHIN_CATEGORY:-0}" == "1" ]]; then
+    args+=(--shuffle_within_category)
+  fi
   "${args[@]}"
 }
 

@@ -1,0 +1,1953 @@
+{
+  "name": "heldout_formal_tac_v2_control_global",
+  "description": "Global answer-frequency-matched control. Diagnostic only.",
+  "seed": 1777,
+  "items": [
+    {
+      "category": "transitivity",
+      "prompt": "When one entails two and two entails three, one entails",
+      "accept": [
+        "continue"
+      ],
+      "reject": [
+        "three",
+        "two"
+      ],
+      "original_accept": [
+        "three"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "4 plus 2 equals",
+      "accept": [
+        "5",
+        "five"
+      ],
+      "reject": [
+        "6",
+        "six"
+      ],
+      "original_accept": [
+        "6",
+        "six"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "50 minus 18 equals",
+      "accept": [
+        "6",
+        "six"
+      ],
+      "reject": [
+        "32",
+        "thirty-two"
+      ],
+      "original_accept": [
+        "32",
+        "thirty-two"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "A Python set is commonly used to remove duplicate",
+      "accept": [
+        "25",
+        "twenty-five"
+      ],
+      "reject": [
+        "items",
+        "values"
+      ],
+      "original_accept": [
+        "values",
+        "items"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "A dictionary lookup uses a key to retrieve a",
+      "accept": [
+        "55",
+        "fifty-five"
+      ],
+      "reject": [
+        "value"
+      ],
+      "original_accept": [
+        "value"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "55 minus 9 equals",
+      "accept": [
+        "N"
+      ],
+      "reject": [
+        "46",
+        "forty-six"
+      ],
+      "original_accept": [
+        "46",
+        "forty-six"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "2 multiplied by 6 equals",
+      "accept": [
+        "gamma"
+      ],
+      "reject": [
+        "12",
+        "twelve"
+      ],
+      "original_accept": [
+        "12",
+        "twelve"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "When L entails M and M entails N, L entails",
+      "accept": [
+        "3",
+        "three"
+      ],
+      "reject": [
+        "M",
+        "N"
+      ],
+      "original_accept": [
+        "N"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "40 divided by 5 equals",
+      "accept": [
+        "0",
+        "zero"
+      ],
+      "reject": [
+        "8",
+        "eight"
+      ],
+      "original_accept": [
+        "8",
+        "eight"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "39 minus 14 equals",
+      "accept": [
+        "8",
+        "eight"
+      ],
+      "reject": [
+        "25",
+        "twenty-five"
+      ],
+      "original_accept": [
+        "25",
+        "twenty-five"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "A parse error is detected before the program",
+      "accept": [
+        "T"
+      ],
+      "reject": [
+        "executes",
+        "runs"
+      ],
+      "original_accept": [
+        "runs",
+        "executes"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "63 divided by 9 equals",
+      "accept": [
+        "gamma"
+      ],
+      "reject": [
+        "7",
+        "seven"
+      ],
+      "original_accept": [
+        "7",
+        "seven"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "The red file imports the blue file. The blue file imports the green file. The red file indirectly imports the",
+      "accept": [
+        "T"
+      ],
+      "reject": [
+        "blue",
+        "green"
+      ],
+      "original_accept": [
+        "green"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "4 divided by 2 equals",
+      "accept": [
+        "None",
+        "none"
+      ],
+      "reject": [
+        "2",
+        "two"
+      ],
+      "original_accept": [
+        "2",
+        "two"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The square of 5 is",
+      "accept": [
+        "green"
+      ],
+      "reject": [
+        "25",
+        "twenty-five"
+      ],
+      "original_accept": [
+        "25",
+        "twenty-five"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, list(range(12)) ends with",
+      "accept": [
+        "green"
+      ],
+      "reject": [
+        "11",
+        "12",
+        "eleven"
+      ],
+      "original_accept": [
+        "11",
+        "eleven"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "If red leads to blue and blue leads to green, then red leads to",
+      "accept": [
+        "three"
+      ],
+      "reject": [
+        "blue",
+        "green"
+      ],
+      "original_accept": [
+        "green"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "When R entails S and S entails T, R entails",
+      "accept": [
+        "sorted"
+      ],
+      "reject": [
+        "S",
+        "T"
+      ],
+      "original_accept": [
+        "T"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "The keyword that exits a Python loop early is",
+      "accept": [
+        "7",
+        "seven"
+      ],
+      "reject": [
+        "break"
+      ],
+      "original_accept": [
+        "break"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "A path goes from city red to city blue. It then goes from city blue to city green. Starting at city red reaches city",
+      "accept": [
+        "9",
+        "nine"
+      ],
+      "reject": [
+        "blue",
+        "green"
+      ],
+      "original_accept": [
+        "green"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(8))) returns",
+      "accept": [
+        "three"
+      ],
+      "reject": [
+        "8",
+        "eight"
+      ],
+      "original_accept": [
+        "8",
+        "eight"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "A try block handles errors with an except",
+      "accept": [
+        "three"
+      ],
+      "reject": [
+        "block",
+        "clause"
+      ],
+      "original_accept": [
+        "block",
+        "clause"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The remainder when 50 is divided by 2 is",
+      "accept": [
+        "gamma"
+      ],
+      "reject": [
+        "0",
+        "zero"
+      ],
+      "original_accept": [
+        "0",
+        "zero"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "If service one requires service two and service two requires service three, service one requires service",
+      "accept": [
+        "39",
+        "thirty-nine"
+      ],
+      "reject": [
+        "three",
+        "two"
+      ],
+      "original_accept": [
+        "three"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "Appending to the end of a Python list uses the method",
+      "accept": [
+        "126",
+        "126"
+      ],
+      "reject": [
+        "append"
+      ],
+      "original_accept": [
+        "append"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "6 multiplied by 4 equals",
+      "accept": [
+        "8",
+        "eight"
+      ],
+      "reject": [
+        "24",
+        "twenty-four"
+      ],
+      "original_accept": [
+        "24",
+        "twenty-four"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The square of 8 is",
+      "accept": [
+        "12",
+        "twelve"
+      ],
+      "reject": [
+        "64",
+        "sixty-four"
+      ],
+      "original_accept": [
+        "64",
+        "sixty-four"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "Token L maps to token M. Token M maps to token N. Token L maps eventually to token",
+      "accept": [
+        "18",
+        "eighteen"
+      ],
+      "reject": [
+        "M",
+        "N"
+      ],
+      "original_accept": [
+        "N"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, list(range(10)) ends with",
+      "accept": [
+        "126",
+        "126"
+      ],
+      "reject": [
+        "10",
+        "9",
+        "nine"
+      ],
+      "original_accept": [
+        "9",
+        "nine"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, 5 % 2 evaluates to",
+      "accept": [
+        "2",
+        "two"
+      ],
+      "reject": [
+        "1",
+        "one"
+      ],
+      "original_accept": [
+        "1",
+        "one"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "18 plus 10 equals",
+      "accept": [
+        "HELLO",
+        "hello uppercase"
+      ],
+      "reject": [
+        "28",
+        "twenty-eight"
+      ],
+      "original_accept": [
+        "28",
+        "twenty-eight"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "A path goes from city R to city S. It then goes from city S to city T. Starting at city R reaches city",
+      "accept": [
+        "50",
+        "fifty"
+      ],
+      "reject": [
+        "S",
+        "T"
+      ],
+      "original_accept": [
+        "T"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "28 minus 10 equals",
+      "accept": [
+        "gamma"
+      ],
+      "reject": [
+        "18",
+        "eighteen"
+      ],
+      "original_accept": [
+        "18",
+        "eighteen"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(12))) returns",
+      "accept": [
+        "9",
+        "nine"
+      ],
+      "reject": [
+        "12",
+        "twelve"
+      ],
+      "original_accept": [
+        "12",
+        "twelve"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(10))) returns",
+      "accept": [
+        "17",
+        "seventeen"
+      ],
+      "reject": [
+        "10",
+        "ten"
+      ],
+      "original_accept": [
+        "10",
+        "ten"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, list(range(8)) ends with",
+      "accept": [
+        "pairs"
+      ],
+      "reject": [
+        "7",
+        "8",
+        "seven"
+      ],
+      "original_accept": [
+        "7",
+        "seven"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "12 divided by 4 equals",
+      "accept": [
+        "32",
+        "thirty-two"
+      ],
+      "reject": [
+        "3",
+        "three"
+      ],
+      "original_accept": [
+        "3",
+        "three"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "16 divided by 8 equals",
+      "accept": [
+        "green"
+      ],
+      "reject": [
+        "2",
+        "two"
+      ],
+      "original_accept": [
+        "2",
+        "two"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "25 plus 14 equals",
+      "accept": [
+        "6",
+        "six"
+      ],
+      "reject": [
+        "39",
+        "thirty-nine"
+      ],
+      "original_accept": [
+        "39",
+        "thirty-nine"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "39 plus 5 equals",
+      "accept": [
+        "O(n)",
+        "linear"
+      ],
+      "reject": [
+        "44",
+        "forty-four"
+      ],
+      "original_accept": [
+        "44",
+        "forty-four"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "If service R requires service S and service S requires service T, service R requires service",
+      "accept": [
+        "25",
+        "twenty-five"
+      ],
+      "reject": [
+        "S",
+        "T"
+      ],
+      "original_accept": [
+        "T"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "Token R maps to token S. Token S maps to token T. Token R maps eventually to token",
+      "accept": [
+        "three"
+      ],
+      "reject": [
+        "S",
+        "T"
+      ],
+      "original_accept": [
+        "T"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "L is heavier than M. M is heavier than N. Therefore L is heavier than",
+      "accept": [
+        "green"
+      ],
+      "reject": [
+        "M",
+        "N"
+      ],
+      "original_accept": [
+        "N"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "Box R contains box S. Box S contains box T. Box R contains box",
+      "accept": [
+        "24",
+        "twenty-four"
+      ],
+      "reject": [
+        "S",
+        "T"
+      ],
+      "original_accept": [
+        "T"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "alpha equals beta. beta equals gamma. Therefore alpha equals",
+      "accept": [
+        "16",
+        "sixteen"
+      ],
+      "reject": [
+        "beta",
+        "gamma"
+      ],
+      "original_accept": [
+        "gamma"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "5 multiplied by 5 equals",
+      "accept": [
+        "green"
+      ],
+      "reject": [
+        "25",
+        "twenty-five"
+      ],
+      "original_accept": [
+        "25",
+        "twenty-five"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "If R leads to S and S leads to T, then R leads to",
+      "accept": [
+        "25",
+        "twenty-five"
+      ],
+      "reject": [
+        "S",
+        "T"
+      ],
+      "original_accept": [
+        "T"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "Box one contains box two. Box two contains box three. Box one contains box",
+      "accept": [
+        "9",
+        "nine"
+      ],
+      "reject": [
+        "three",
+        "two"
+      ],
+      "original_accept": [
+        "three"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "When red entails blue and blue entails green, red entails",
+      "accept": [
+        "11",
+        "eleven"
+      ],
+      "reject": [
+        "blue",
+        "green"
+      ],
+      "original_accept": [
+        "green"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The square of 4 is",
+      "accept": [
+        "block",
+        "clause"
+      ],
+      "reject": [
+        "16",
+        "sixteen"
+      ],
+      "original_accept": [
+        "16",
+        "sixteen"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "44 minus 5 equals",
+      "accept": [
+        "8",
+        "eight"
+      ],
+      "reject": [
+        "39",
+        "thirty-nine"
+      ],
+      "original_accept": [
+        "39",
+        "thirty-nine"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "21 divided by 3 equals",
+      "accept": [
+        "6",
+        "six"
+      ],
+      "reject": [
+        "7",
+        "seven"
+      ],
+      "original_accept": [
+        "7",
+        "seven"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "The alpha file imports the beta file. The beta file imports the gamma file. The alpha file indirectly imports the",
+      "accept": [
+        "N"
+      ],
+      "reject": [
+        "beta",
+        "gamma"
+      ],
+      "original_accept": [
+        "gamma"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "Token one maps to token two. Token two maps to token three. Token one maps eventually to token",
+      "accept": [
+        "import"
+      ],
+      "reject": [
+        "three",
+        "two"
+      ],
+      "original_accept": [
+        "three"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "L equals M. M equals N. Therefore L equals",
+      "accept": [
+        "46",
+        "forty-six"
+      ],
+      "reject": [
+        "M",
+        "N"
+      ],
+      "original_accept": [
+        "N"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, list(range(9)) ends with",
+      "accept": [
+        "12",
+        "twelve"
+      ],
+      "reject": [
+        "8",
+        "9",
+        "eight"
+      ],
+      "original_accept": [
+        "8",
+        "eight"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "one equals two. two equals three. Therefore one equals",
+      "accept": [
+        "2",
+        "two"
+      ],
+      "reject": [
+        "three",
+        "two"
+      ],
+      "original_accept": [
+        "three"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "Token red maps to token blue. Token blue maps to token green. Token red maps eventually to token",
+      "accept": [
+        "64",
+        "sixty-four"
+      ],
+      "reject": [
+        "blue",
+        "green"
+      ],
+      "original_accept": [
+        "green"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "A path goes from city L to city M. It then goes from city M to city N. Starting at city L reaches city",
+      "accept": [
+        "[1, 2, 3]",
+        "1, 2, 3"
+      ],
+      "reject": [
+        "M",
+        "N"
+      ],
+      "original_accept": [
+        "N"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "If service L requires service M and service M requires service N, service L requires service",
+      "accept": [
+        "green"
+      ],
+      "reject": [
+        "M",
+        "N"
+      ],
+      "original_accept": [
+        "N"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(2))) returns",
+      "accept": [
+        "three"
+      ],
+      "reject": [
+        "2",
+        "two"
+      ],
+      "original_accept": [
+        "2",
+        "two"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "one is heavier than two. two is heavier than three. Therefore one is heavier than",
+      "accept": [
+        "1",
+        "one"
+      ],
+      "reject": [
+        "three",
+        "two"
+      ],
+      "original_accept": [
+        "three"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(7))) returns",
+      "accept": [
+        "4",
+        "four"
+      ],
+      "reject": [
+        "7",
+        "seven"
+      ],
+      "original_accept": [
+        "7",
+        "seven"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, list(range(5)) ends with",
+      "accept": [
+        "T"
+      ],
+      "reject": [
+        "4",
+        "5",
+        "four"
+      ],
+      "original_accept": [
+        "4",
+        "four"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "6 minus 2 equals",
+      "accept": [
+        "0",
+        "zero"
+      ],
+      "reject": [
+        "4",
+        "four"
+      ],
+      "original_accept": [
+        "4",
+        "four"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "The worst-case time complexity of linear search is",
+      "accept": [
+        "20",
+        "twenty"
+      ],
+      "reject": [
+        "O(n)",
+        "linear"
+      ],
+      "original_accept": [
+        "O(n)",
+        "linear"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(9))) returns",
+      "accept": [
+        "2",
+        "two"
+      ],
+      "reject": [
+        "9",
+        "nine"
+      ],
+      "original_accept": [
+        "9",
+        "nine"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, 'hello'.upper() returns",
+      "accept": [
+        "27",
+        "twenty-seven"
+      ],
+      "reject": [
+        "HELLO",
+        "hello uppercase"
+      ],
+      "original_accept": [
+        "HELLO",
+        "hello uppercase"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "Token alpha maps to token beta. Token beta maps to token gamma. Token alpha maps eventually to token",
+      "accept": [
+        "three"
+      ],
+      "reject": [
+        "beta",
+        "gamma"
+      ],
+      "original_accept": [
+        "gamma"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "The Python statement used to import a module is",
+      "accept": [
+        "default"
+      ],
+      "reject": [
+        "import"
+      ],
+      "original_accept": [
+        "import"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, list(range(3)) ends with",
+      "accept": [
+        "4",
+        "four"
+      ],
+      "reject": [
+        "2",
+        "3",
+        "two"
+      ],
+      "original_accept": [
+        "2",
+        "two"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "9 multiplied by 3 equals",
+      "accept": [
+        "N"
+      ],
+      "reject": [
+        "27",
+        "twenty-seven"
+      ],
+      "original_accept": [
+        "27",
+        "twenty-seven"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "Box L contains box M. Box M contains box N. Box L contains box",
+      "accept": [
+        "value"
+      ],
+      "reject": [
+        "M",
+        "N"
+      ],
+      "original_accept": [
+        "N"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The remainder when 44 is divided by 9 is",
+      "accept": [
+        "10",
+        "ten"
+      ],
+      "reject": [
+        "8",
+        "eight"
+      ],
+      "original_accept": [
+        "8",
+        "eight"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(5))) returns",
+      "accept": [
+        "gamma"
+      ],
+      "reject": [
+        "5",
+        "five"
+      ],
+      "original_accept": [
+        "5",
+        "five"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "Box alpha contains box beta. Box beta contains box gamma. Box alpha contains box",
+      "accept": [
+        "11",
+        "eleven"
+      ],
+      "reject": [
+        "beta",
+        "gamma"
+      ],
+      "original_accept": [
+        "gamma"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "R equals S. S equals T. Therefore R equals",
+      "accept": [
+        "N"
+      ],
+      "reject": [
+        "S",
+        "T"
+      ],
+      "original_accept": [
+        "T"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "A hash table stores key value",
+      "accept": [
+        "36",
+        "thirty-six"
+      ],
+      "reject": [
+        "pairs"
+      ],
+      "original_accept": [
+        "pairs"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(11))) returns",
+      "accept": [
+        "44",
+        "forty-four"
+      ],
+      "reject": [
+        "11",
+        "eleven"
+      ],
+      "original_accept": [
+        "11",
+        "eleven"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, 'abc'[1] evaluates to",
+      "accept": [
+        "gamma"
+      ],
+      "reject": [
+        "b"
+      ],
+      "original_accept": [
+        "b"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "The keyword that skips to the next loop iteration is",
+      "accept": [
+        "green"
+      ],
+      "reject": [
+        "continue"
+      ],
+      "original_accept": [
+        "continue"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "red equals blue. blue equals green. Therefore red equals",
+      "accept": [
+        "gamma"
+      ],
+      "reject": [
+        "blue",
+        "green"
+      ],
+      "original_accept": [
+        "green"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "32 plus 18 equals",
+      "accept": [
+        "11",
+        "eleven"
+      ],
+      "reject": [
+        "50",
+        "fifty"
+      ],
+      "original_accept": [
+        "50",
+        "fifty"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "alpha is heavier than beta. beta is heavier than gamma. Therefore alpha is heavier than",
+      "accept": [
+        "append"
+      ],
+      "reject": [
+        "beta",
+        "gamma"
+      ],
+      "original_accept": [
+        "gamma"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The square of 6 is",
+      "accept": [
+        "N"
+      ],
+      "reject": [
+        "36",
+        "thirty-six"
+      ],
+      "original_accept": [
+        "36",
+        "thirty-six"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The remainder when 28 is divided by 4 is",
+      "accept": [
+        "5",
+        "five"
+      ],
+      "reject": [
+        "0",
+        "zero"
+      ],
+      "original_accept": [
+        "0",
+        "zero"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "red is heavier than blue. blue is heavier than green. Therefore red is heavier than",
+      "accept": [
+        "gamma"
+      ],
+      "reject": [
+        "blue",
+        "green"
+      ],
+      "original_accept": [
+        "green"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "24 divided by 6 equals",
+      "accept": [
+        "green"
+      ],
+      "reject": [
+        "4",
+        "four"
+      ],
+      "original_accept": [
+        "4",
+        "four"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The square of 3 is",
+      "accept": [
+        "forever",
+        "infinitely"
+      ],
+      "reject": [
+        "9",
+        "nine"
+      ],
+      "original_accept": [
+        "9",
+        "nine"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "The one file imports the two file. The two file imports the three file. The one file indirectly imports the",
+      "accept": [
+        "39",
+        "thirty-nine"
+      ],
+      "reject": [
+        "three",
+        "two"
+      ],
+      "original_accept": [
+        "three"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, list(range(7)) ends with",
+      "accept": [
+        "4",
+        "four"
+      ],
+      "reject": [
+        "6",
+        "7",
+        "six"
+      ],
+      "original_accept": [
+        "6",
+        "six"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "The L file imports the M file. The M file imports the N file. The L file indirectly imports the",
+      "accept": [
+        "2",
+        "two"
+      ],
+      "reject": [
+        "M",
+        "N"
+      ],
+      "original_accept": [
+        "N"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "18 multiplied by 7 equals",
+      "accept": [
+        "2",
+        "two"
+      ],
+      "reject": [
+        "126"
+      ],
+      "original_accept": [
+        "126",
+        "126"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "Binary search requires the input list to be",
+      "accept": [
+        "three"
+      ],
+      "reject": [
+        "sorted"
+      ],
+      "original_accept": [
+        "sorted"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "A path goes from city alpha to city beta. It then goes from city beta to city gamma. Starting at city alpha reaches city",
+      "accept": [
+        "7",
+        "seven"
+      ],
+      "reject": [
+        "beta",
+        "gamma"
+      ],
+      "original_accept": [
+        "gamma"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(4))) returns",
+      "accept": [
+        "7",
+        "seven"
+      ],
+      "reject": [
+        "4",
+        "four"
+      ],
+      "original_accept": [
+        "4",
+        "four"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "11 plus 6 equals",
+      "accept": [
+        "T"
+      ],
+      "reject": [
+        "17",
+        "seventeen"
+      ],
+      "original_accept": [
+        "17",
+        "seventeen"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The remainder when 39 is divided by 3 is",
+      "accept": [
+        "N"
+      ],
+      "reject": [
+        "0",
+        "zero"
+      ],
+      "original_accept": [
+        "0",
+        "zero"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, 5 // 2 evaluates to",
+      "accept": [
+        "T"
+      ],
+      "reject": [
+        "2",
+        "two"
+      ],
+      "original_accept": [
+        "2",
+        "two"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "The Python value representing nothing is",
+      "accept": [
+        "T"
+      ],
+      "reject": [
+        "None",
+        "none"
+      ],
+      "original_accept": [
+        "None",
+        "none"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "If service red requires service blue and service blue requires service green, service red requires service",
+      "accept": [
+        "7",
+        "seven"
+      ],
+      "reject": [
+        "blue",
+        "green"
+      ],
+      "original_accept": [
+        "green"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "If one leads to two and two leads to three, then one leads to",
+      "accept": [
+        "0",
+        "zero"
+      ],
+      "reject": [
+        "three",
+        "two"
+      ],
+      "original_accept": [
+        "three"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "A base case prevents recursive functions from recursing",
+      "accept": [
+        "T"
+      ],
+      "reject": [
+        "forever",
+        "infinitely"
+      ],
+      "original_accept": [
+        "forever",
+        "infinitely"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The square of 2 is",
+      "accept": [
+        "0",
+        "zero"
+      ],
+      "reject": [
+        "4",
+        "four"
+      ],
+      "original_accept": [
+        "4",
+        "four"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, list(range(11)) ends with",
+      "accept": [
+        "3",
+        "three"
+      ],
+      "reject": [
+        "10",
+        "11",
+        "ten"
+      ],
+      "original_accept": [
+        "10",
+        "ten"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "17 minus 6 equals",
+      "accept": [
+        "28",
+        "twenty-eight"
+      ],
+      "reject": [
+        "11",
+        "eleven"
+      ],
+      "original_accept": [
+        "11",
+        "eleven"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "The Python operator for exponentiation is",
+      "accept": [
+        "4",
+        "four"
+      ],
+      "reject": [
+        "**",
+        "star star"
+      ],
+      "original_accept": [
+        "**",
+        "star star"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, [1, 2] + [3] evaluates to",
+      "accept": [
+        "7",
+        "seven"
+      ],
+      "reject": [
+        "1, 2, 3",
+        "[1, 2, 3]"
+      ],
+      "original_accept": [
+        "[1, 2, 3]",
+        "1, 2, 3"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "If alpha leads to beta and beta leads to gamma, then alpha leads to",
+      "accept": [
+        "N"
+      ],
+      "reject": [
+        "beta",
+        "gamma"
+      ],
+      "original_accept": [
+        "gamma"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, list(range(6)) ends with",
+      "accept": [
+        "10",
+        "ten"
+      ],
+      "reject": [
+        "5",
+        "6",
+        "five"
+      ],
+      "original_accept": [
+        "5",
+        "five"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "14 multiplied by 9 equals",
+      "accept": [
+        "8",
+        "eight"
+      ],
+      "reject": [
+        "126"
+      ],
+      "original_accept": [
+        "126",
+        "126"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "A variable inside a function is local by",
+      "accept": [
+        "N"
+      ],
+      "reject": [
+        "default"
+      ],
+      "original_accept": [
+        "default"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "10 multiplied by 2 equals",
+      "accept": [
+        "b"
+      ],
+      "reject": [
+        "20",
+        "twenty"
+      ],
+      "original_accept": [
+        "20",
+        "twenty"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "If service alpha requires service beta and service beta requires service gamma, service alpha requires service",
+      "accept": [
+        "4",
+        "four"
+      ],
+      "reject": [
+        "beta",
+        "gamma"
+      ],
+      "original_accept": [
+        "gamma"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The remainder when 6 is divided by 6 is",
+      "accept": [
+        "T"
+      ],
+      "reject": [
+        "0",
+        "zero"
+      ],
+      "original_accept": [
+        "0",
+        "zero"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(3))) returns",
+      "accept": [
+        "**",
+        "star star"
+      ],
+      "reject": [
+        "3",
+        "three"
+      ],
+      "original_accept": [
+        "3",
+        "three"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "code_reasoning",
+      "prompt": "In Python, len(list(range(6))) returns",
+      "accept": [
+        "break"
+      ],
+      "reject": [
+        "6",
+        "six"
+      ],
+      "original_accept": [
+        "6",
+        "six"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "transitivity",
+      "prompt": "The R file imports the S file. The S file imports the T file. The R file indirectly imports the",
+      "accept": [
+        "three"
+      ],
+      "reject": [
+        "S",
+        "T"
+      ],
+      "original_accept": [
+        "T"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "46 plus 9 equals",
+      "accept": [
+        "runs",
+        "executes"
+      ],
+      "reject": [
+        "55",
+        "fifty-five"
+      ],
+      "original_accept": [
+        "55",
+        "fifty-five"
+      ],
+      "control": "global_answer_frequency_matched"
+    },
+    {
+      "category": "arithmetic",
+      "prompt": "The remainder when 55 is divided by 8 is",
+      "accept": [
+        "values",
+        "items"
+      ],
+      "reject": [
+        "7",
+        "seven"
+      ],
+      "original_accept": [
+        "7",
+        "seven"
+      ],
+      "control": "global_answer_frequency_matched"
+    }
+  ],
+  "counts": {
+    "arithmetic": 40,
+    "code_reasoning": 40,
+    "transitivity": 40
+  },
+  "total": 120
+}

@@ -172,6 +172,26 @@ Artifacts:
 - `logs/eval/pathA_heldout_repair_vs_shuffled_multiseed.json`
 - `logs/eval/pathA_heldout_shuffled_vs_base_multiseed.json`
 
+### Held-out TAC v2 — larger balanced controls
+
+The next evaluation substrate is now source-generated rather than hand-written:
+`generate_balanced_heldout_tac.py --per_category 40` writes a 120-item TAC v2
+benchmark with `40/40/40` transitivity, arithmetic, and code_reasoning prompts.
+It excludes the built-in benchmark and the v1 held-out prompts, giving zero
+prompt overlap with both.
+
+Control files:
+- `ts_bridge/heldout_formal_tac_v2_control_global.json` — preserves the full
+  answer multiset globally while assigning answers to different prompts.
+- `ts_bridge/heldout_formal_tac_v2_control_category.json` — preserves answer
+  frequency inside each category while assigning answers to different prompts.
+
+Repair data generation now supports `--shuffle_within_category`, and
+`run_cpu_repair_117m.sh` exposes it as `SHUFFLE_WITHIN_CATEGORY=1`. This is the
+stronger negative control for the next CPU repair sweep: any gain that survives
+in the category-shuffled condition should be treated as format/domain
+adaptation, not answer-specific learning.
+
 ### Architecture changes from 117M baseline
 
 | Parameter | 117M baseline | New run |

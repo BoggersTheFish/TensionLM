@@ -159,6 +159,8 @@ def main() -> None:
                     help="Do not include formal_eval.BENCHMARK prompts in the repair pool.")
     ap.add_argument("--shuffle_answers", action="store_true",
                     help="Negative control: keep prompts/categories but assign shuffled answers.")
+    ap.add_argument("--shuffle_within_category", action="store_true",
+                    help="Stronger negative control: shuffle answers only within each category, preserving category balance and answer frequency.")
     args = ap.parse_args()
 
     rng = random.Random(args.seed)
@@ -174,7 +176,23 @@ def main() -> None:
     if not pool:
         raise ValueError("repair pool is empty after exclusions")
     prompts = [(cat, prompt, answer) for cat, prompt, answer, _ in pool]
-    if args.shuffle_answers:
+    if args.shuffle_answers and args.shuffle_within_category:
+        raise ValueError("choose only one of --shuffle_answers or --shuffle_within_category")
+    if args.shuffle_within_category:
+        grouped: dict[str, list[int]] = {}
+        for i, (cat, _, _) in enumerate(prompts):
+            grouped.setdefault(cat, []).append(i)
+        next_prompts = list(prompts)
+        for cat, indices in grouped.items():
+            answers = [prompts[i][2] for i in indices]
+            rng.shuffle(answers)
+            if len(answers) > 1 and all(answers[j] == prompts[indices[j]][2] for j in range(len(indices))):
+                answers = answers[1:] + answers[:1]
+            for answer, idx in zip(answers, indices):
+                old_cat, prompt, _ = next_prompts[idx]
+                next_prompts[idx] = (old_cat, prompt, answer)
+        prompts = next_prompts
+    elif args.shuffle_answers:
         answers = [answer for _, _, answer in prompts]
         rng.shuffle(answers)
         prompts = [(cat, prompt, answers[i]) for i, (cat, prompt, _) in enumerate(prompts)]
@@ -244,6 +262,7 @@ def main() -> None:
         "excluded_prompt_count": len(excluded_prompts),
         "include_canonical_eval": not args.no_canonical_eval,
         "shuffle_answers": args.shuffle_answers,
+        "shuffle_within_category": args.shuffle_within_category,
     }
     meta_path = out / "metadata.json"
     meta_path.write_text(json.dumps(meta, indent=2))
