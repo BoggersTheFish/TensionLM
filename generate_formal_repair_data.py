@@ -216,18 +216,21 @@ def main() -> None:
         buf.extend(tokenizer.encode(text).ids + sep)
 
         while len(buf) >= args.shard_tokens:
+            remaining = args.target_tokens - total
             if train_written < train_budget:
+                chunk_n = min(args.shard_tokens, remaining, train_budget - train_written)
                 path = out / f"train_{train_idx:04d}.bin"
                 train_idx += 1
-                train_written += args.shard_tokens
+                train_written += chunk_n
             else:
+                chunk_n = min(args.shard_tokens, remaining)
                 path = out / f"val_{val_idx:04d}.bin"
                 val_idx += 1
-            chunk = buf[: args.shard_tokens]
-            buf = buf[args.shard_tokens:]
+            chunk = buf[:chunk_n]
+            buf = buf[chunk_n:]
             shards.append(write_shard(path, chunk))
-            total += args.shard_tokens
-            print(f"  {path.name}: {args.shard_tokens:,} tokens")
+            total += chunk_n
+            print(f"  {path.name}: {chunk_n:,} tokens")
             if total >= args.target_tokens:
                 break
 

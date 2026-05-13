@@ -202,6 +202,7 @@ for variant in clean category_control global_control; do
   BENCHMARK_JSON="ts_bridge/heldout_formal_tac_v2.json" \
   GPT2_EVAL_JSON="logs/eval/gpt2_heldout_tac_v2_seed42.json" \
   REPAIR_TOKENS=120000 \
+  REPAIR_SHARD_TOKENS=50000 \
   REPAIR_VAL_TOKENS=10000 \
   TRAIN_TOKENS=32768 \
   SEED=42 \
