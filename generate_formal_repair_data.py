@@ -125,14 +125,16 @@ def build_pool(*, include_canonical_eval: bool = True,
     return [row for row in pool if row[1] not in excluded_prompts]
 
 
-def render_example(category: str, prompt: str, answer: str, rng: random.Random) -> str:
+def render_example(category: str, prompt: str, answer: str, rng: random.Random,
+                   *, answer_prefix_only: bool = False) -> str:
     # Keep answer-prefix pressure high: the completion starts immediately after
     # the prompt, matching `formal_eval.py` rather than instruction tuning.
     variants = [
         f"{prompt} {answer}.",
         f"{prompt} {answer}\n",
-        f"Question: {prompt}\nAnswer: {answer}.\n",
     ]
+    if not answer_prefix_only:
+        variants.append(f"Question: {prompt}\nAnswer: {answer}.\n")
     if category == "code_reasoning":
         variants.append(f"{prompt} {answer}.")
         variants.append(f"{prompt} {answer}\n")
@@ -161,6 +163,8 @@ def main() -> None:
                     help="Negative control: keep prompts/categories but assign shuffled answers.")
     ap.add_argument("--shuffle_within_category", action="store_true",
                     help="Stronger negative control: shuffle answers only within each category, preserving category balance and answer frequency.")
+    ap.add_argument("--answer_prefix_only", action="store_true",
+                    help="Omit Question/Answer wrapper examples so completions start with the answer.")
     args = ap.parse_args()
 
     rng = random.Random(args.seed)
@@ -212,7 +216,8 @@ def main() -> None:
 
     while total < args.target_tokens:
         category, prompt, answer = rng.choices(prompts, weights=weights, k=1)[0]
-        text = render_example(category, prompt, answer, rng)
+        text = render_example(category, prompt, answer, rng,
+                              answer_prefix_only=args.answer_prefix_only)
         buf.extend(tokenizer.encode(text).ids + sep)
 
         while len(buf) >= args.shard_tokens:
@@ -266,6 +271,7 @@ def main() -> None:
         "include_canonical_eval": not args.no_canonical_eval,
         "shuffle_answers": args.shuffle_answers,
         "shuffle_within_category": args.shuffle_within_category,
+        "answer_prefix_only": args.answer_prefix_only,
     }
     meta_path = out / "metadata.json"
     meta_path.write_text(json.dumps(meta, indent=2))

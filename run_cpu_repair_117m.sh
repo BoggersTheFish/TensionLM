@@ -49,6 +49,9 @@ prepare_data() {
   if [[ "${SHUFFLE_WITHIN_CATEGORY:-0}" == "1" ]]; then
     args+=(--shuffle_within_category)
   fi
+  if [[ "${ANSWER_PREFIX_ONLY:-0}" == "1" ]]; then
+    args+=(--answer_prefix_only)
+  fi
   "${args[@]}"
 }
 

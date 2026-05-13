@@ -209,3 +209,47 @@ for variant in clean category_control global_control; do
   bash run_cpu_repair_117m.sh all
 done
 ```
+
+## Wave 2 CPU Repair Receipt
+
+Configuration:
+
+- Seed: `42`
+- Repair corpus: `120000` tokens, with v2 held-out prompts excluded.
+- Train budget: `32768` tokens, top layers `8-11`.
+- Eval: `ts_bridge/heldout_formal_tac_v2.json`.
+
+Result:
+
+| Run | Prefix | Substring | Prefix vs GPT-2 | Main observation |
+| --- | ---: | ---: | ---: | --- |
+| Base TensionLM 117M | 7/120 | 11/120 | +4 | Transitivity-heavy win. |
+| Clean repair | 7/120 | 10/120 | +4 | Ties base; does not improve. |
+| Category control | 5/120 | 7/120 | +2 | Degrades code and overall. |
+| Global control | 3/120 | 4/120 | +0 | Collapses to GPT-2-level prefix. |
+
+Interpretation:
+
+- The top-layer CPU repair pressure is real enough that bad controls degrade
+  the model, but the clean run does not beat the base model.
+- Many clean-run misses emit `Answer:` or recycled `Question:` fragments before
+  the answer. This is a training/eval contract mismatch, not just a reasoning
+  failure.
+- Next repair attempt should remove wrapper examples and train only completions
+  where the answer begins immediately after the prompt.
+
+Immediate prefix-only repair command:
+
+```bash
+RUN_NAME="formal-repair-v2-prefix-only-seed42" \
+EXCLUDE_PROMPTS_JSON="ts_bridge/heldout_formal_tac_v2.json" \
+BENCHMARK_JSON="ts_bridge/heldout_formal_tac_v2.json" \
+GPT2_EVAL_JSON="logs/eval/gpt2_heldout_tac_v2_seed42.json" \
+REPAIR_TOKENS=120000 \
+REPAIR_SHARD_TOKENS=50000 \
+REPAIR_VAL_TOKENS=10000 \
+TRAIN_TOKENS=32768 \
+ANSWER_PREFIX_ONLY=1 \
+SEED=42 \
+bash run_cpu_repair_117m.sh all
+```
