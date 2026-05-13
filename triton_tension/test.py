@@ -16,6 +16,13 @@ import torch.nn.functional as F
 from triton_tension.ops import causal_tension
 
 
+def require_cuda() -> bool:
+    if torch.cuda.is_available():
+        return True
+    print("SKIP: Triton kernel tests require CUDA, but no CUDA device is available.")
+    return False
+
+
 # ── Reference implementation (matches model.py exactly) ──────────────────────
 
 def ref_causal_tension(Q, K, V, window, scale, bias=None):
@@ -229,6 +236,8 @@ def test_large(B=4, T=512, H=12, HD=64, W=64):
 
 if __name__ == "__main__":
     print("Triton causal tension kernel tests\n")
+    if not require_cuda():
+        raise SystemExit(0)
 
     print("Forward correctness:")
     test_forward(dtype=torch.float32)

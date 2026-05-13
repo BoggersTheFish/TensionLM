@@ -637,6 +637,10 @@ def train(args):
 
     # TF32 matmuls on Ampere+ GPUs — free throughput, negligible accuracy loss
     torch.set_float32_matmul_precision("high")
+    if device.type != "cuda" and args.triton:
+        args.triton = False
+        if is_main:
+            print("Triton: disabled (CUDA device not available)")
 
     out_dir  = args.out_dir
     tok_path = os.path.join(out_dir, "tokenizer.json")
@@ -926,7 +930,9 @@ def train(args):
         ckpt_file = os.path.join(out_dir, "latest.pt")
         if os.path.exists(ckpt_file):
             ckpt = load_checkpoint(ckpt_file, device)
-            ckpt_state = ckpt["model"]
+            from ts_bridge.smoke_test import _migrate_fused_kv
+            ckpt_state = {k.replace("_orig_mod.", ""): v for k, v in ckpt["model"].items()}
+            ckpt_state = _migrate_fused_kv(ckpt_state, cfg)
 
             # ── Vocab expansion: stage transfer with larger tokenizer ──
             # If the checkpoint was trained with vocab_A < vocab_B (current model),

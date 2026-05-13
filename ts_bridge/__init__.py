@@ -14,6 +14,11 @@ from .head_filter import (
 from .export      import ExportStats, TauExporter
 from .streaming   import StreamStats, StreamingTauExporter
 from .bias        import BiasStats, GraphBias
+from .rescore     import (
+    GraphBuildResult, GenerationTrace, RescoreConfig,
+    build_rule_graph, generate_with_rescore, mode_flags,
+    score_output, prefix_score, substring_score,
+)
 
 __all__ = [
     "Edge", "Node", "UniversalLivingGraph",
@@ -22,4 +27,7 @@ __all__ = [
     "ExportStats", "TauExporter",
     "StreamStats", "StreamingTauExporter",
     "BiasStats", "GraphBias",
+    "GraphBuildResult", "GenerationTrace", "RescoreConfig",
+    "build_rule_graph", "generate_with_rescore", "mode_flags",
+    "score_output", "prefix_score", "substring_score",
 ]

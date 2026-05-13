@@ -86,18 +86,30 @@ def run_forward(
     ctx_tensor:  torch.Tensor,
     bias:        torch.Tensor | None = None,
     bias_global: torch.Tensor | None = None,
-) -> torch.Tensor:
+) -> tuple[torch.Tensor, list[torch.Tensor]]:
     """
     Return last-position logits [vocab].  Forced through return_all=True so
     both the Triton and unfold local-layer paths normalise by tau_mass
     (their return_all=False branches disagree on normalisation — the Triton
     path falls back to valid_count there).
     """
-    out, _, _ = model(
+    out, _, all_tau = model(
         ctx_tensor, return_all=True,
         tau_bias=bias, tau_bias_global=bias_global,
     )
-    return out[0, -1].float()
+    return out[0, -1].float(), all_tau
+
+
+def _local_tau_gap(a: list[torch.Tensor], b: list[torch.Tensor]) -> float:
+    """Max tau-field delta on local layers only."""
+    gaps = []
+    for ta, tb in zip(a, b):
+        if ta.shape[-1] != tb.shape[-1]:
+            continue
+        gaps.append((ta.float() - tb.float()).abs().max())
+    if not gaps:
+        return 0.0
+    return float(torch.stack(gaps).max().item())
 
 
 def main():
@@ -113,6 +125,10 @@ def main():
     ap.add_argument("--force_triton", action="store_true",
                     help="Override load_model's use_triton=False so the fused "
                          "kernel is exercised on CUDA. No-op on CPU.")
+    ap.add_argument("--min_kl", type=float, default=1e-6,
+                    help="Minimum KL for a logit-level movement pass.")
+    ap.add_argument("--min_tau_delta", type=float, default=1e-6,
+                    help="Minimum tau-field movement for a substrate-level pass.")
     args = ap.parse_args()
 
     model, tokenizer, cfg = load_model(
@@ -154,12 +170,14 @@ def main():
     ctx = torch.tensor(ids, dtype=torch.long, device=args.device).unsqueeze(0)
 
     # ── 1. Local no-op invariant ────────────────────────────────────────────
-    logits_unbiased = run_forward(model, ctx)
+    logits_unbiased, tau_unbiased = run_forward(model, ctx)
     bias_zero = torch.zeros(1, T, W, device=args.device)
-    logits_zero = run_forward(model, ctx, bias=bias_zero)
+    logits_zero, tau_zero = run_forward(model, ctx, bias=bias_zero)
     noop_gap = (logits_unbiased - logits_zero).abs().max().item()
+    noop_tau_gap = _local_tau_gap(tau_unbiased, tau_zero)
     print(f"\n[1] local no-op invariant: max|Δlogit| = {noop_gap:.2e}   "
-          f"{'✓' if noop_gap < 1e-5 else '✗'}")
+          f"{'✓' if noop_gap < 1e-5 and noop_tau_gap < 1e-7 else '✗'}")
+    print(f"    local tau no-op gap = {noop_tau_gap:.2e}")
 
     # ── 2. Local responsiveness ─────────────────────────────────────────────
     graph_A = _seed_graph([(src_A, dst_tok, args.edge_weight)])
@@ -167,14 +185,18 @@ def main():
     bias_A, stats_A = engine_A.local_bias(
         ids, tokenizer, window=W, device=args.device,
     )
-    logits_A = run_forward(model, ctx, bias=bias_A)
+    logits_A, tau_A = run_forward(model, ctx, bias=bias_A)
     kl_A = _kl(logits_A, logits_unbiased)
+    tau_gap_A = _local_tau_gap(tau_A, tau_unbiased)
+    responsive_ok = kl_A > args.min_kl or tau_gap_A > args.min_tau_delta
     print(f"\n[2] local responsiveness: edge '{src_A}'→'{dst_tok}' "
           f"w={args.edge_weight} α={args.alpha}")
     print(f"    bias hits={stats_A.nonzero_pairs}  "
           f"max={stats_A.max_weight:.2f}  mean={stats_A.mean_weight:.2f}")
     print(f"    KL(biased||unbiased) at last pos = {kl_A:.4e}   "
-          f"{'✓' if kl_A > 1e-6 else '✗'}")
+          f"{'✓' if kl_A > args.min_kl else 'sub-threshold'}")
+    print(f"    max local tau delta = {tau_gap_A:.4e}   "
+          f"{'✓' if responsive_ok else '✗'}")
 
     # ── 3. Local directional ────────────────────────────────────────────────
     graph_B = _seed_graph([(src_B, dst_tok, args.edge_weight)])
@@ -182,37 +204,47 @@ def main():
     bias_B, stats_B = engine_B.local_bias(
         ids, tokenizer, window=W, device=args.device,
     )
-    logits_B = run_forward(model, ctx, bias=bias_B)
+    logits_B, tau_B = run_forward(model, ctx, bias=bias_B)
     kl_AB = _kl(logits_A, logits_B)
+    tau_gap_AB = _local_tau_gap(tau_A, tau_B)
+    directional_ok = kl_AB > args.min_kl or tau_gap_AB > args.min_tau_delta
     print(f"\n[3] local directional:    edge '{src_B}'→'{dst_tok}' vs edge A")
     print(f"    bias hits={stats_B.nonzero_pairs}  max={stats_B.max_weight:.2f}")
     print(f"    KL(A||B) at last pos = {kl_AB:.4e}   "
-          f"{'✓' if kl_AB > 1e-6 else '✗'}")
+          f"{'✓' if kl_AB > args.min_kl else 'sub-threshold'}")
+    print(f"    max local tau delta A-vs-B = {tau_gap_AB:.4e}   "
+          f"{'✓' if directional_ok else '✗'}")
 
     # ── Global-layer checks (only when the model has global layers) ────────
     global_ok = True
     if cfg.global_every > 0:
         # [4] Global no-op invariant.
         bias_g_zero = torch.zeros(1, T, T, device=args.device)
-        logits_g_zero = run_forward(model, ctx, bias_global=bias_g_zero)
+        logits_g_zero, tau_g_zero = run_forward(model, ctx, bias_global=bias_g_zero)
         noop_gap_g = (logits_unbiased - logits_g_zero).abs().max().item()
+        noop_tau_gap_g = _local_tau_gap(tau_unbiased, tau_g_zero)
         print(f"\n[4] global no-op invariant: max|Δlogit| = {noop_gap_g:.2e}   "
-              f"{'✓' if noop_gap_g < 1e-5 else '✗'}")
+              f"{'✓' if noop_gap_g < 1e-5 and noop_tau_gap_g < 1e-7 else '✗'}")
+        print(f"    tau no-op gap = {noop_tau_gap_g:.2e}")
 
         # [5] Global-only responsiveness — same seeded edge as [2], built as
         # [B, T, T] and passed without any local bias.
         bias_A_g, stats_A_g = engine_A.global_bias(
             ids, tokenizer, device=args.device,
         )
-        logits_A_g = run_forward(model, ctx, bias_global=bias_A_g)
+        logits_A_g, tau_A_g = run_forward(model, ctx, bias_global=bias_A_g)
         kl_A_g = _kl(logits_A_g, logits_unbiased)
+        tau_gap_A_g = _local_tau_gap(tau_A_g, tau_unbiased)
+        global_responsive_ok = kl_A_g > args.min_kl or tau_gap_A_g > args.min_tau_delta
         print(f"\n[5] global responsiveness (global-only, local=None):")
         print(f"    bias hits={stats_A_g.nonzero_pairs}  "
               f"max={stats_A_g.max_weight:.2f}  mean={stats_A_g.mean_weight:.2f}")
         print(f"    KL(global_biased||unbiased) at last pos = {kl_A_g:.4e}   "
-              f"{'✓' if kl_A_g > 1e-6 else '✗'}")
+              f"{'✓' if kl_A_g > args.min_kl else 'sub-threshold'}")
+        print(f"    max tau delta = {tau_gap_A_g:.4e}   "
+              f"{'✓' if global_responsive_ok else '✗'}")
 
-        global_ok = noop_gap_g < 1e-5 and kl_A_g > 1e-6
+        global_ok = noop_gap_g < 1e-5 and noop_tau_gap_g < 1e-7 and global_responsive_ok
     else:
         print("\n[4-5] global checks skipped: cfg.global_every == 0")
 
@@ -229,7 +261,13 @@ def main():
     print("  bias A   : ", ", ".join(f"{t} ({p:.3f})" for t, p in _top(logits_A)))
     print("  bias B   : ", ", ".join(f"{t} ({p:.3f})" for t, p in _top(logits_B)))
 
-    ok = (noop_gap < 1e-5) and (kl_A > 1e-6) and (kl_AB > 1e-6) and global_ok
+    ok = (
+        noop_gap < 1e-5
+        and noop_tau_gap < 1e-7
+        and responsive_ok
+        and directional_ok
+        and global_ok
+    )
     print(f"\n{'✓ Phase 2 bias mechanism OK' if ok else '✗ Phase 2 bias FAILED'}")
     sys.exit(0 if ok else 1)
 

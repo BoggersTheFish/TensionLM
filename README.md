@@ -6,6 +6,8 @@ A language model built on **sigmoid tension** instead of softmax attention — a
 
 **Models:** [117M Curriculum](https://huggingface.co/BoggersTheFish/TensionLM-117M-Curriculum) · [117M WikiText-103](https://huggingface.co/BoggersTheFish/TensionLM-117M) · [Phase 2 TS-Native](https://huggingface.co/BoggersTheFish/TensionLM-Phase2-TSNative) · [GitHub](https://github.com/BoggersTheFish/bozo)
 
+**Public evidence boundary:** see [PUBLIC_EVIDENCE.md](./PUBLIC_EVIDENCE.md) for the current claim ledger, published artifacts, negative results, and wording rules. Short version: TensionLM is a working sigmoid-tension substrate with promising formal-domain signals; matched small-scale softmax comparisons are currently neutral, so do not frame the mechanism as a general capability win yet.
+
 ---
 
 ## The mechanism
@@ -250,11 +252,12 @@ python3 eval.py --checkpoint checkpoints/math_stage3/ckpt_0014000.pt
 
 ## Open questions
 
-1. Does `--logic_mix 0.10` prevent the step-14k degradation? (Active investigation on the next run.)
+1. Does `--logic_mix 0.10` prevent the step-14k degradation at full Path A scale?
 2. Does W=256 meaningfully improve multi-step proof following vs W=64?
 3. What is the optimal logic_mix ratio for stage 3?
 4. Does the mechanism's advantage transfer from math to code reasoning?
-5. Is the Chinchilla-optimal token count different for TS-native training vs standard cross-entropy?
+5. How much of CPU repair is answer-specific learning versus format/domain adaptation?
+6. Is the Chinchilla-optimal token count different for TS-native training vs standard cross-entropy?
 
 ---
 
@@ -272,5 +275,6 @@ python3 eval.py --checkpoint checkpoints/math_stage3/ckpt_0014000.pt
 | `visualise.py` | Tension field inspection |
 | `compare.py` | Plot loss curves |
 | `upload_hf.py` | Upload to HuggingFace Hub |
+| `PUBLIC_EVIDENCE.md` | Public claim ledger and evidence boundaries |
 | `triton_tension/` | Fused Triton kernels (fwd + bwd) with optional τ emission |
 | `ts_bridge/` | Optional bidirectional coupling to a `UniversalLivingGraph` substrate |

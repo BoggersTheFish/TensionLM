@@ -68,6 +68,110 @@ The Exp 2 coherence response replicates qualitatively on 117M-Curriculum (10/10 
 
 **Target:** a TensionLM model that demonstrably outperforms an equivalent transformer on mathematical and code reasoning, with interpretable constraint structure as a first-class output.
 
+### Path A baseline status — raw model versus GPT-2
+
+Path A is now measured as a **model-level** comparison, not as TS bridge extraction. `formal_eval.py` can evaluate Hugging Face causal LMs via `--hf_model`, so GPT-2 and TensionLM use the same prompts, same sampling settings, and same strict first-answer scoring.
+
+Current raw subset: transitivity + arithmetic + code_reasoning, 43 prompts, 4 sampling seeds (`1,2,3,42`), `max_new=12`, `temp=0.3`, `top_p=0.9`.
+
+| Model | Prefix | Substring | Notes |
+|-------|--------|-----------|-------|
+| GPT-2 124M | 12/172 (7.0%) | 17/172 (9.9%) | Stronger on code snippets |
+| TensionLM 117M curriculum step 14k | **28/172 (16.3%)** | **35/172 (20.3%)** | Stronger on arithmetic + transitivity |
+
+Category prefix deltas for TensionLM vs GPT-2:
+- arithmetic: **+15.0 pts** (12/80 vs 0/80)
+- transitivity: **+17.3 pts** (13/52 vs 4/52)
+- code_reasoning: **-12.5 pts** (3/40 vs 8/40)
+
+Artifact: `logs/eval/pathA_raw_compare_multiseed.json`. This is an early Path A win on the formal subset, but not yet a complete GPT-2 outperformance claim: the code edge is negative, the benchmark is repo-local, and the next model must move to GPT-2 tokenizer + W=256 + ProofPile/code curriculum to make the win broader and less prompt-fragile.
+
+Full 125-question repo benchmark at seed `42` also favors TensionLM: **19/125 prefix** versus **7/125 prefix** for GPT-2 (`logs/eval/pathA_raw_compare_full_seed42.json`). This strengthens the raw-model evidence across algebra, arithmetic, calculus, contradiction, definitions, induction, and syllogism, while preserving the same open blocker: GPT-2 still beats the current checkpoint on code_reasoning.
+
+Concrete next-run machinery now exists:
+- `export_gpt2_tokenizer.py` exports GPT-2's 50,257-token tokenizer to the `tokenizers` JSON format consumed by TensionLM.
+- `prepare_path_a_data.py` streams configurable HF/formal/code sources and writes `train.py`-compatible uint16 shards.
+- `run_path_a_117m.sh` launches the GPT-2-tokenized Path A run: regenerated logic stage, ProofPile-2 formal stage, open-web-math + code stage, `W=256`, `max_seq_len=2048`, `global_every=3`, `logic_mix=0.10`.
+
+Validated source defaults:
+- formal/proof stage: `aklein4/proof-pile-2-fixed`, config `algebraic-stack`, field `text`, split `train`
+- math stage: `open-web-math/open-web-math`, field `text`, split `train`
+- code stage: `codeparrot/codecomplex`, field `src`, split `train`
+
+Smoke status: `./run_path_a_117m.sh smoke` successfully exported the GPT-2 tokenizer, generated GPT-2-tokenized logic/formal smoke shards, and trained a tiny 3.3M TensionLM for 8 CPU steps from those shards. Tiny HF source builds also succeeded for the default ProofPile/math/code sources.
+
+### CPU-only repair path
+
+Because the current local environment has no CUDA runtime, the practical Path A workaround is **localized graph relaxation**, not full retraining. The existing 117M curriculum checkpoint is treated as the stable substrate; only a small active region is trained.
+
+Implemented CPU repair machinery:
+- `generate_formal_repair_data.py` builds a dense answer-prefix corpus using formal/code prompts plus arithmetic/transitivity replay.
+- `run_cpu_repair_117m.sh` copies the 117M checkpoint, freezes lower/middle blocks with `--train_layers 8-11`, and fine-tunes only the upper four blocks plus unfrozen surface weights.
+- `train.py` resume now migrates older `_orig_mod.*` and fused `wkv` checkpoint keys, and disables Triton automatically when CUDA is unavailable.
+
+Observed CPU repair pulse:
+- Data: 200k-token formal/code repair corpus.
+- Training: 8,192 tokens, CPU, `seq_len=128`, active blocks `8-11`.
+- Eval: raw TAC subset, seed `42`, no TS bridge.
+
+| Model | Prefix | Arithmetic | Transitivity | Code |
+|-------|--------|------------|--------------|------|
+| GPT-2 124M | 3/43 | 0/20 | 1/13 | 2/10 |
+| Base TensionLM 117M | 7/43 | 3/20 | 3/13 | 1/10 |
+| CPU repair TensionLM | **11/43** | **4/20** | **4/13** | **3/10** |
+
+Artifacts:
+- `logs/eval/cpu_repair_117m_raw_tac_seed42.json`
+- `logs/eval/pathA_cpu_repair_vs_gpt2_seed42.json`
+- `logs/eval/pathA_cpu_repair_vs_base_seed42.json`
+
+This is the first local evidence that the CPU workaround can move the high-tension code edge without losing the existing arithmetic/transitivity advantage. Next relaxation step: increase the repair pulse to 65k-250k training tokens, run seeds `1,2,3,42`, and stop only if code improves while arithmetic/transitivity do not regress.
+
+Multi-seed repair check is now complete on seeds `1,2,3,42`:
+
+| Model | Prefix | Arithmetic | Transitivity | Code |
+|-------|--------|------------|--------------|------|
+| GPT-2 124M | 12/172 | 0/80 | 4/52 | 8/40 |
+| Base TensionLM 117M | 28/172 | 12/80 | 13/52 | 3/40 |
+| CPU repair TensionLM | **46/172** | **13/80** | **21/52** | **12/40** |
+
+The repair pulse improves over base by **+18 prefix hits overall**, with the biggest movement in code_reasoning (**+9 hits**) and transitivity (**+8 hits**), while arithmetic is held roughly stable. This validates the CPU-only strategy as a real Path A route: localized graph relaxation can improve the raw model without a full GPU-scale retrain.
+
+Artifacts:
+- `logs/eval/pathA_cpu_repair_vs_gpt2_multiseed.json`
+- `logs/eval/pathA_cpu_repair_vs_base_multiseed.json`
+
+### Held-out and negative-control check
+
+To test whether the CPU repair was only memorizing repo-local prompts, `formal_eval.py` now accepts `--benchmark_json`, and a 30-item held-out TAC benchmark lives at `ts_bridge/heldout_formal_tac.json`. The fresh held-out repair run used:
+- `--no_canonical_eval`
+- `--exclude_prompts_json ts_bridge/heldout_formal_tac.json`
+- exact prompt overlap between held-out eval and repair pool: **0/30**
+
+Held-out TAC, seeds `1,2,3,42`, raw generation:
+
+| Model | Prefix | Arithmetic | Transitivity | Code |
+|-------|--------|------------|--------------|------|
+| GPT-2 124M | 0/120 | 0/40 | 0/40 | 0/40 |
+| Base TensionLM 117M | 10/120 | 3/40 | 7/40 | 0/40 |
+| Held-out CPU repair | **21/120** | **7/40** | **11/40** | **3/40** |
+
+Negative control: same top-layer repair shape, same held-out prompt exclusion, but shuffled training answers.
+
+| Model | Prefix | Arithmetic | Transitivity | Code |
+|-------|--------|------------|--------------|------|
+| Shuffled-answer repair | 15/120 | 3/40 | 8/40 | **4/40** |
+| Correct-answer repair | **21/120** | **7/40** | **11/40** | 3/40 |
+
+Interpretation: the held-out result is real but not clean enough to claim answer-specific learning alone. The shuffled-answer control also improves over base, especially on code, so part of the gain is top-layer format/domain adaptation. Correct-answer repair still wins overall, especially arithmetic and transitivity. The next proof step is a larger held-out set plus a stronger negative control that preserves answer-token frequency and category balance.
+
+Artifacts:
+- `logs/eval/pathA_heldout_repair_vs_gpt2_multiseed.json`
+- `logs/eval/pathA_heldout_repair_vs_base_multiseed.json`
+- `logs/eval/pathA_heldout_base_vs_gpt2_multiseed.json`
+- `logs/eval/pathA_heldout_repair_vs_shuffled_multiseed.json`
+- `logs/eval/pathA_heldout_shuffled_vs_base_multiseed.json`
+
 ### Architecture changes from 117M baseline
 
 | Parameter | 117M baseline | New run |
@@ -141,7 +245,7 @@ torchrun --nproc_per_node=2 train.py \
 
 Beyond perplexity, the model will be evaluated on:
 
-1. **Extended formal reasoning benchmark** — expand the existing 23-question set to 100+ questions across: syllogisms, arithmetic, algebra, calculus, linear algebra, proof by contradiction, induction
+1. **Extended formal reasoning benchmark** — `formal_eval.py` now exposes a 125-question deterministic benchmark across: syllogisms, transitivity, arithmetic, algebra, calculus, definitions, linear algebra, proof by contradiction, induction, and code reasoning. Use `--list_categories`, `--category`, and `--limit` for checkpoint triage.
 2. **MATH dataset subset** — 500 problems across difficulty levels 1-5
 3. **HumanEval / MBPP** — Python code completion as the first code-reasoning signal
 4. **Tension field quality** — constraint transitivity score, head specialisation index, coherence ratio (coherent text τ density / random τ density)
@@ -224,6 +328,10 @@ TensionLM's internal representation is already a weighted graph, which makes it 
 | 2.2b | ✓ e4a10d8 | Global-layer graph bias — `tau_bias_global: [B,T,T]` plumbed through `TensionLM.forward` |
 | 2.2c | ✓ 03f050b | Triton-fused graph bias — kernel `Bias` pointer + `HAS_BIAS` constexpr, σ' recomputed from biased τ, no dBias grad |
 | 2.2d | ✓ | α calibration on 117M-curriculum. Sweep: α∈{0.25,0.5,1,2,4,8,16} × {seed=42, seed=7} × 60 new tokens. Silent ≤ α=2; inflection at α≈4 (seed-dependent); α=8 reliably opens the loop (+9–19 edges, +0.026–0.073 mean-w vs unbiased-export), text coherent; α=16 degrades |
+| 2.3 | ✓ | Rule-built transitivity substrate probe on 117M-curriculum. Prompt-structure parser seeds answer→query graph edges without reading benchmark answers. Tau-bias only (`α=4`) improves strict first-token transitivity from 3/13 → 9/13. Adding graph-supported candidate rescoring (`surface_beta=4`) reaches 13/13; treat this as a diagnostic field-rescorer result, not base-model reasoning. |
+| 2.4 | ✓ | Reusable TS rescorer path: `ts_bridge.rescore`, `formal_eval.py --ts_mode {base,tau,surface,both}`, `ts_bridge.ablate_formal`, and `ts_bridge.export_training_signals`. Ablations on 117M-curriculum: transitivity prefix base/tau/surface/both = 6/13, 8/13, 12/13, 12/13; arithmetic = 3/20, 4/20, 14/20, 14/20; code_reasoning = 1/10, 1/10, 4/10, 4/10. JSONL training signals exported for transitivity+arithmetic+code. |
+| 2.5 | ✓ | First learned field rescorer: `ts_bridge.field_rescorer` builds candidate rows from base logits, tau logits, graph candidate flags, ranks, and token features; trains a tiny CPU MLP ranker. On TAC candidate-selection rows it reaches 36/43 in-sample. Leave-one-category-out: train transitivity+arithmetic → code 4/10; train arithmetic+code → transitivity 11/13; train transitivity+code → arithmetic 19/20. This is candidate-selection quality, not full free-generation accuracy. |
+| 2.6 | ✓ | Answer-sequence rescoring for BPE-split / multi-token answers. `formal_eval.py --ts_mode sequence` selects a graph-supported answer string, emits its token sequence, then optionally continues. On rule-covered probes: transitivity 13/13 prefix, arithmetic 20/20 prefix, code_reasoning 10/10 prefix. This is extractor-style TS answer selection, not unconstrained LM reasoning, but it closes the BPE/candidate-token failure exposed by Phase 2.5. |
 | 3 | — | Integration A/B vs `BoggersTheAI` stock surface on held-out QA (contradiction rate, trace confidence) |
 
 This track is cleanly separable from the main training roadmap. Landing it widens what the surface-level research can inform later; not landing it doesn't invalidate the LLM work.

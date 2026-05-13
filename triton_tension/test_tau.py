@@ -18,6 +18,13 @@ import torch.nn.functional as F
 from triton_tension.ops import causal_tension, _ref_forward
 
 
+def require_cuda() -> bool:
+    if torch.cuda.is_available():
+        return True
+    print("SKIP: Triton return_tau tests require CUDA, but no CUDA device is available.")
+    return False
+
+
 def ref_out_and_tau(Q, K, V, W, scale):
     """Pure-PyTorch reference: returns raw Σ τ·V (unnormalised) and tau."""
     Qf, Kf, Vf = Q.float(), K.float(), V.float()
@@ -161,6 +168,8 @@ def test_memory_vs_unfold():
 
 if __name__ == "__main__":
     print("Triton tension kernel — return_tau parity tests\n")
+    if not require_cuda():
+        raise SystemExit(0)
 
     print("Forward tau parity:")
     test_forward_tau(dtype=torch.float32)

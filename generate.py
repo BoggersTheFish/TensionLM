@@ -35,13 +35,16 @@ def get_args():
     p.add_argument("--anchor",      action="store_true",       help="Keep prompt tokens permanently in tension window (TS anchored generation)")
     p.add_argument("--show_tension",action="store_true",       help="Show tension field for each prompt")
     p.add_argument("--layer",       default=0,     type=int,   help="Layer to visualise tensions for")
+    p.add_argument("--tokenizer",   default=None,              help="Override tokenizer path from checkpoint")
     return p.parse_args()
 
 
-def load_model_and_tokenizer(ckpt_path: str):
+def load_model_and_tokenizer(ckpt_path: str, tokenizer_path: str | None = None):
     print(f"Loading {ckpt_path} ...")
     ckpt  = torch.load(ckpt_path, map_location="cpu", weights_only=False)
-    cfg   = TensionConfig(**ckpt["cfg"])
+    cfg_dict = dict(ckpt["cfg"])
+    cfg_dict["use_triton"] = False
+    cfg   = TensionConfig(**cfg_dict)
     arch  = ckpt.get("arch", "tension")
 
     if arch == "transformer":
@@ -52,10 +55,13 @@ def load_model_and_tokenizer(ckpt_path: str):
 
     # Strip _orig_mod. prefix present when checkpoint was saved from a compiled model
     state = {k.replace("_orig_mod.", ""): v for k, v in ckpt["model"].items()}
+    if arch != "transformer":
+        from ts_bridge.smoke_test import _migrate_fused_kv
+        state = _migrate_fused_kv(state, cfg)
     model.load_state_dict(state)
     model.eval()
 
-    tok_path = ckpt["tok_path"]
+    tok_path = tokenizer_path or ckpt["tok_path"]
     try:
         from tokenizers import Tokenizer
         tokenizer = Tokenizer.from_file(tok_path)
@@ -92,7 +98,7 @@ def print_model_info(model, ckpt):
 
 def main():
     args = get_args()
-    model, tokenizer, ckpt = load_model_and_tokenizer(args.checkpoint)
+    model, tokenizer, ckpt = load_model_and_tokenizer(args.checkpoint, args.tokenizer)
     print_model_info(model, ckpt)
 
     if args.prompt:

@@ -17,7 +17,11 @@ env/
 checkpoints/
 logs/
 results/
+hf_exports/
 data/**/*.bin
 data/open-web-math/
 data/fineweb*/
+data/formal-repair*/
+data/path-a-*/
+data/gpt2-tokenizer/
 *.png

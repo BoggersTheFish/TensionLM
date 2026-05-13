@@ -32,16 +32,20 @@ def get_args():
     p.add_argument("--batch_size",  default=16,   type=int)
     p.add_argument("--stride",      default=None, type=int,
                    help="Sliding window stride (default: seq_len = non-overlapping)")
+    p.add_argument("--tokenizer",   default=None,
+                   help="Override tokenizer path from checkpoint")
     return p.parse_args()
 
 
-def load_model(ckpt_path: str, device):
+def load_model(ckpt_path: str, device, tokenizer_path: str | None = None):
     print(f"Loading {ckpt_path} ...")
     ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
     arch = ckpt.get("arch", "tension")
 
     from model import TensionConfig
-    cfg = TensionConfig(**ckpt["cfg"])
+    cfg_dict = dict(ckpt["cfg"])
+    cfg_dict["use_triton"] = False
+    cfg = TensionConfig(**cfg_dict)
 
     if arch == "transformer":
         from baseline import TransformerLM
@@ -51,12 +55,15 @@ def load_model(ckpt_path: str, device):
         model = TensionLM(cfg)
 
     state = {k.replace("_orig_mod.", ""): v for k, v in ckpt["model"].items()}
+    if arch != "transformer":
+        from ts_bridge.smoke_test import _migrate_fused_kv
+        state = _migrate_fused_kv(state, cfg)
     model.load_state_dict(state)
     model.eval()
     model.to(device)
 
     from tokenizers import Tokenizer
-    tokenizer = Tokenizer.from_file(ckpt["tok_path"])
+    tokenizer = Tokenizer.from_file(tokenizer_path or ckpt["tok_path"])
 
     return model, tokenizer, cfg, arch, ckpt
 
@@ -89,7 +96,7 @@ def main():
     args   = get_args()
     device = torch.device("cpu")
 
-    model, tokenizer, cfg, arch, ckpt = load_model(args.checkpoint, device)
+    model, tokenizer, cfg, arch, ckpt = load_model(args.checkpoint, device, args.tokenizer)
     seq_len = cfg.max_seq_len
     stride  = args.stride or seq_len  # non-overlapping by default
 
