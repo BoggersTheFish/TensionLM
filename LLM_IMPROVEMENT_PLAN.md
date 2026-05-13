@@ -156,3 +156,54 @@ for seed in 1 2 3 42; do
     --json_out "logs/eval/tension117m_heldout_tac_v2_seed${seed}.json"
 done
 ```
+
+## Wave 2 Seed 42 Receipt
+
+Command configuration:
+
+- Benchmark: `ts_bridge/heldout_formal_tac_v2.json`
+- Decoding: `max_new=12`, `temp=0.3`, `top_p=0.9`
+- Seed: `42`
+- Comparison log:
+  `logs/eval/pathA_heldout_tac_v2_base_vs_gpt2_seed42.json`
+
+Result:
+
+| Model | Prefix | Substring | Arithmetic prefix | Code prefix | Transitivity prefix |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GPT-2 | 3/120 | 5/120 | 1/40 | 2/40 | 0/40 |
+| Base TensionLM 117M | 7/120 | 11/120 | 0/40 | 1/40 | 6/40 |
+
+Interpretation:
+
+- Base TensionLM wins the single-seed v2 TAC comparison overall:
+  `+3.3%` prefix and `+5.0%` substring.
+- The gain is structurally concentrated in transitivity:
+  `6/40` prefix for TensionLM vs `0/40` for GPT-2.
+- The active high-tension nodes are arithmetic and code reasoning. The next
+  repair wave should target those categories without erasing the transitivity
+  advantage.
+
+Immediate repair sweep:
+
+```bash
+for variant in clean category_control global_control; do
+  case "$variant" in
+    clean)
+      SHUFFLE_ANSWERS=0 SHUFFLE_WITHIN_CATEGORY=0 ;;
+    category_control)
+      SHUFFLE_ANSWERS=0 SHUFFLE_WITHIN_CATEGORY=1 ;;
+    global_control)
+      SHUFFLE_ANSWERS=1 SHUFFLE_WITHIN_CATEGORY=0 ;;
+  esac
+
+  RUN_NAME="formal-repair-v2-${variant}-seed42" \
+  EXCLUDE_PROMPTS_JSON="ts_bridge/heldout_formal_tac_v2.json" \
+  EVAL_BENCHMARK_JSON="ts_bridge/heldout_formal_tac_v2.json" \
+  TARGET_TOKENS=120000 \
+  VAL_TOKENS=10000 \
+  MAX_STEPS=250 \
+  SEED=42 \
+  bash run_cpu_repair_117m.sh
+done
+```
