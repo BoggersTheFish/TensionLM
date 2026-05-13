@@ -9,11 +9,20 @@ set -euo pipefail
 
 ROOT="${ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 PY="${PY:-$ROOT/.venv/bin/python}"
+RUN_NAME="${RUN_NAME:-}"
 
 BASE_CKPT="${BASE_CKPT:-$ROOT/checkpoints/117m-curriculum/pytorch_model.pt}"
 TOKENIZER="${TOKENIZER:-$ROOT/checkpoints/117m-curriculum/tokenizer.json}"
-DATA_DIR="${DATA_DIR:-$ROOT/data/formal-repair-117m}"
-OUT_DIR="${OUT_DIR:-$ROOT/checkpoints/cpu-repair-117m-top4}"
+DEFAULT_DATA_DIR="$ROOT/data/formal-repair-117m"
+DEFAULT_OUT_DIR="$ROOT/checkpoints/cpu-repair-117m-top4"
+LOG_STEM="cpu_repair_117m_top4"
+if [[ -n "$RUN_NAME" ]]; then
+  DEFAULT_DATA_DIR="$ROOT/data/$RUN_NAME"
+  DEFAULT_OUT_DIR="$ROOT/checkpoints/$RUN_NAME"
+  LOG_STEM="$RUN_NAME"
+fi
+DATA_DIR="${DATA_DIR:-$DEFAULT_DATA_DIR}"
+OUT_DIR="${OUT_DIR:-$DEFAULT_OUT_DIR}"
 LOG_DIR="$ROOT/logs"
 
 mkdir -p "$LOG_DIR" "$OUT_DIR" "$ROOT/logs/eval"
@@ -75,11 +84,14 @@ train_repair() {
     --log_every "${LOG_EVERY:-4}" \
     --eval_every "${EVAL_EVERY:-32}" \
     --save_every "${SAVE_EVERY:-32}" \
-    --log_csv "$LOG_DIR/cpu_repair_117m_top4.csv" \
-    2>&1 | tee "$LOG_DIR/cpu_repair_117m_top4.log"
+    --log_csv "$LOG_DIR/${LOG_STEM}.csv" \
+    2>&1 | tee "$LOG_DIR/${LOG_STEM}.log"
 }
 
 eval_repair() {
+  eval_seed="${EVAL_SEED:-42}"
+  repair_eval_json="${REPAIR_EVAL_JSON:-$ROOT/logs/eval/${LOG_STEM}_raw_tac_seed${eval_seed}.json}"
+  compare_json="${COMPARE_JSON:-$ROOT/logs/eval/${LOG_STEM}_vs_gpt2_seed${eval_seed}.json}"
   benchmark_args=()
   if [[ -n "${BENCHMARK_JSON:-}" ]]; then
     benchmark_args+=(--benchmark_json "$BENCHMARK_JSON")
@@ -92,14 +104,14 @@ eval_repair() {
     --device cpu \
     "${benchmark_args[@]}" \
     --ts_mode base \
-    --max_new 12 --temp 0.3 --top_p 0.9 --seed "${EVAL_SEED:-42}" \
-    --json_out "${REPAIR_EVAL_JSON:-$ROOT/logs/eval/cpu_repair_117m_raw_tac_seed42.json}"
+    --max_new 12 --temp 0.3 --top_p 0.9 --seed "$eval_seed" \
+    --json_out "$repair_eval_json"
   "$PY" -m ts_bridge.path_a_compare \
     --run gpt2="${GPT2_EVAL_JSON:-$ROOT/logs/eval/gpt2_pathA_raw_tac_seed42.json}" \
-    --run tension117m_repair="${REPAIR_EVAL_JSON:-$ROOT/logs/eval/cpu_repair_117m_raw_tac_seed42.json}" \
+    --run tension117m_repair="$repair_eval_json" \
     --primary tension117m_repair \
     --baseline gpt2 \
-    --out "${COMPARE_JSON:-$ROOT/logs/eval/pathA_cpu_repair_vs_gpt2_seed42.json}"
+    --out "$compare_json"
 }
 
 case "${1:-}" in

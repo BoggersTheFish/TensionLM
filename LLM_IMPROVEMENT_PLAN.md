@@ -199,11 +199,12 @@ for variant in clean category_control global_control; do
 
   RUN_NAME="formal-repair-v2-${variant}-seed42" \
   EXCLUDE_PROMPTS_JSON="ts_bridge/heldout_formal_tac_v2.json" \
-  EVAL_BENCHMARK_JSON="ts_bridge/heldout_formal_tac_v2.json" \
-  TARGET_TOKENS=120000 \
-  VAL_TOKENS=10000 \
-  MAX_STEPS=250 \
+  BENCHMARK_JSON="ts_bridge/heldout_formal_tac_v2.json" \
+  GPT2_EVAL_JSON="logs/eval/gpt2_heldout_tac_v2_seed42.json" \
+  REPAIR_TOKENS=120000 \
+  REPAIR_VAL_TOKENS=10000 \
+  TRAIN_TOKENS=32768 \
   SEED=42 \
-  bash run_cpu_repair_117m.sh
+  bash run_cpu_repair_117m.sh all
 done
 ```
