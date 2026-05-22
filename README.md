@@ -1,4 +1,16 @@
-# TensionLM
+# bozo / TensionLM
+
+**Status:** flagship experimental model-mechanism repo.
+
+**Role in the TS stack:** TensionLM experiment: sigmoid pairwise tension attention as an inspectable alternative to softmax attention.
+
+**What this repo is:** A bounded language-model research repo for implementing, training, and evaluating sigmoid tension attention and TS-native objective variants.
+
+**What this repo is not:** Not currently a proven general capability improvement over transformers; current evidence should be treated as bounded experimental results.
+
+**Start here:** read the public evidence boundary, then inspect the training/evaluation scripts and linked Hugging Face artifacts.
+
+**Public naming note:** this repo currently contains the TensionLM work despite the older repo name `bozo`.
 
 A language model built on **sigmoid tension** instead of softmax attention — an implementation of Thinking System (TS) theory of computation as constraint relaxation.
 
