@@ -135,7 +135,7 @@ def main():
     dataset     = train_args.get("dataset", "unknown")
     training_info = (
         f"Trained for {ckpt.get('step', '?')} steps on {dataset}. "
-        f"See [github.com/BoggersTheFish/bozo](https://github.com/BoggersTheFish/bozo) "
+        f"See [github.com/BoggersTheFish/TensionLM](https://github.com/BoggersTheFish/TensionLM) "
         f"for training code."
     )
 

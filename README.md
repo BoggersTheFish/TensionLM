@@ -1,4 +1,4 @@
-# bozo / TensionLM
+# TensionLM
 
 **Status:** flagship experimental model-mechanism repo.
 
@@ -8,15 +8,15 @@
 
 **What this repo is not:** Not currently a proven general capability improvement over transformers; current evidence should be treated as bounded experimental results.
 
-**Start here:** read the public evidence boundary, then inspect the training/evaluation scripts and linked Hugging Face artifacts.
+**Canonical route:** [TS-Start-Here](https://github.com/BoggersTheFish/TS-Start-Here) -> [TS-Reasoner-v0](https://github.com/BoggersTheFish/TS-Reasoner-v0) -> TensionLM -> TS-Codex-OS / TS-Core / CIG.
 
-**Public naming note:** this repo currently contains the TensionLM work despite the older repo name `bozo`.
+**Start here:** run the public Hugging Face loading smoke test, read the public evidence boundary, then inspect the training/evaluation scripts and linked Hugging Face artifacts.
 
 A language model built on **sigmoid tension** instead of softmax attention — an implementation of Thinking System (TS) theory of computation as constraint relaxation.
 
 **Current focus: mathematical and code reasoning.** Formal domains are the ideal fit for a constraint-relaxation LM — contradictions cannot exist by construction, so the constraint graph built during training is coherent by definition. Code has the same property (a program either parses and runs or it doesn't), with a larger, more varied training corpus.
 
-**Models:** [117M Curriculum](https://huggingface.co/BoggersTheFish/TensionLM-117M-Curriculum) · [117M WikiText-103](https://huggingface.co/BoggersTheFish/TensionLM-117M) · [Phase 2 TS-Native](https://huggingface.co/BoggersTheFish/TensionLM-Phase2-TSNative) · [GitHub](https://github.com/BoggersTheFish/bozo)
+**Models:** [117M Curriculum](https://huggingface.co/BoggersTheFish/TensionLM-117M-Curriculum) · [117M WikiText-103](https://huggingface.co/BoggersTheFish/TensionLM-117M) · [Phase 2 TS-Native](https://huggingface.co/BoggersTheFish/TensionLM-Phase2-TSNative) · [GitHub](https://github.com/BoggersTheFish/TensionLM)
 
 **Public evidence boundary:** see [PUBLIC_EVIDENCE.md](./PUBLIC_EVIDENCE.md) for the current claim ledger, published artifacts, negative results, and wording rules. Short version: TensionLM is a working sigmoid-tension substrate with promising formal-domain signals; matched small-scale softmax comparisons are currently neutral, so do not frame the mechanism as a general capability win yet.
 
@@ -213,7 +213,17 @@ All of the above is bidirectional plumbing between TensionLM and a `UniversalLiv
 ## Quick start
 
 ```bash
-pip install torch tokenizers datasets triton
+pip install -r requirements.txt
+python3 scripts/run_public_tensionlm.py
+```
+
+The public runner defaults to `BoggersTheFish/TensionLM-Curriculum-13M`, downloads
+the checkpoint from Hugging Face, runs on CPU by default, and prints a raw sample
+plus a limitation note. Output quality is not the claim; public loading is.
+
+For local training:
+
+```bash
 python3 train.py                      # TensionLM, WikiText-2, small preset
 python3 train.py --model transformer  # baseline transformer for comparison
 ```
@@ -221,6 +231,9 @@ python3 train.py --model transformer  # baseline transformer for comparison
 ### Generate
 
 ```bash
+python3 scripts/run_public_tensionlm.py \
+  --repo-id BoggersTheFish/TensionLM-Curriculum-13M \
+  --prompt "If all mammals are animals and all whales are mammals then"
 python3 generate.py --checkpoint checkpoints/math_stage3/ckpt_0014000.pt \
     --prompt "The derivative of x squared is"
 ```
